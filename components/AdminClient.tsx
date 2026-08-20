@@ -40,10 +40,10 @@ export default function AdminClient({ userEmail }: { userEmail: string }) {
   const [items, setItems] = useState<MenuItem[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [draft, setDraft] = useState<MenuDraft>(emptyDraft);
+  const [editingCategoryId, setEditingCategoryId] = useState<string | null>(null);
   const [categoryName, setCategoryName] = useState("");
-  const [categorySort, setCategorySort] = useState("50");
+  const [editingLocationId, setEditingLocationId] = useState<string | null>(null);
   const [locationName, setLocationName] = useState("");
-  const [locationSort, setLocationSort] = useState("50");
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -60,11 +60,11 @@ export default function AdminClient({ userEmail }: { userEmail: string }) {
         supabase
           .from("menu_categories")
           .select("id, name, sort_order, is_active")
-          .order("sort_order", { ascending: true }),
+          .order("name", { ascending: true }),
         supabase
           .from("delivery_locations")
           .select("id, name, sort_order, is_active")
-          .order("sort_order", { ascending: true }),
+          .order("name", { ascending: true }),
         supabase
           .from("menu_items")
           .select("id, category_id, name, description, price_cents, image_url, is_available")
@@ -117,6 +117,26 @@ export default function AdminClient({ userEmail }: { userEmail: string }) {
     });
   }
 
+  function editCategory(category: MenuCategory) {
+    setEditingCategoryId(category.id);
+    setCategoryName(category.name);
+  }
+
+  function resetCategoryForm() {
+    setEditingCategoryId(null);
+    setCategoryName("");
+  }
+
+  function editLocation(location: DeliveryLocation) {
+    setEditingLocationId(location.id);
+    setLocationName(location.name);
+  }
+
+  function resetLocationForm() {
+    setEditingLocationId(null);
+    setLocationName("");
+  }
+
   async function saveMenuItem(event: React.FormEvent) {
     event.preventDefault();
     if (!supabase) return;
@@ -156,19 +176,20 @@ export default function AdminClient({ userEmail }: { userEmail: string }) {
       setError("Category name is required.");
       return;
     }
-    const sortOrder = Number.parseInt(categorySort, 10);
-    const { error } = await supabase.from("menu_categories").insert({
+    const payload = {
       name: categoryName.trim(),
-      sort_order: Number.isFinite(sortOrder) ? sortOrder : 50,
       is_active: true,
-    });
+    };
+    const request = editingCategoryId
+      ? supabase.from("menu_categories").update(payload).eq("id", editingCategoryId)
+      : supabase.from("menu_categories").insert(payload);
+    const { error } = await request;
     if (error) {
       setError("Could not save that category.");
       return;
     }
-    setCategoryName("");
-    setCategorySort("50");
-    setMessage("Category added.");
+    resetCategoryForm();
+    setMessage(editingCategoryId ? "Category updated." : "Category added.");
     await loadAdminData();
   }
 
@@ -179,19 +200,20 @@ export default function AdminClient({ userEmail }: { userEmail: string }) {
       setError("Delivery location name is required.");
       return;
     }
-    const sortOrder = Number.parseInt(locationSort, 10);
-    const { error } = await supabase.from("delivery_locations").insert({
+    const payload = {
       name: locationName.trim(),
-      sort_order: Number.isFinite(sortOrder) ? sortOrder : 50,
       is_active: true,
-    });
+    };
+    const request = editingLocationId
+      ? supabase.from("delivery_locations").update(payload).eq("id", editingLocationId)
+      : supabase.from("delivery_locations").insert(payload);
+    const { error } = await request;
     if (error) {
       setError("Could not save that delivery location.");
       return;
     }
-    setLocationName("");
-    setLocationSort("50");
-    setMessage("Delivery location added.");
+    resetLocationForm();
+    setMessage(editingLocationId ? "Delivery location updated." : "Delivery location added.");
     await loadAdminData();
   }
 
@@ -208,6 +230,57 @@ export default function AdminClient({ userEmail }: { userEmail: string }) {
     await loadAdminData();
   }
 
+  async function deleteMenuItem(item: MenuItem) {
+    if (!supabase) return;
+    const confirmed = window.confirm(`Remove "${item.name}" from the menu?`);
+    if (!confirmed) return;
+    const { error } = await supabase.from("menu_items").delete().eq("id", item.id);
+    if (error) {
+      setError("Could not remove that menu item.");
+      return;
+    }
+    if (draft.id === item.id) {
+      setDraft(emptyDraft);
+    }
+    setMessage("Menu item removed.");
+    await loadAdminData();
+  }
+
+  async function toggleCategory(category: MenuCategory) {
+    if (!supabase) return;
+    const { error } = await supabase
+      .from("menu_categories")
+      .update({ is_active: !category.is_active })
+      .eq("id", category.id);
+    if (error) {
+      setError("Could not update that category.");
+      return;
+    }
+    setMessage(category.is_active ? "Category disabled." : "Category enabled.");
+    await loadAdminData();
+  }
+
+  async function deleteCategory(category: MenuCategory) {
+    if (!supabase) return;
+    const itemCount = items.filter((item) => item.category_id === category.id).length;
+    const confirmed = window.confirm(
+      itemCount > 0
+        ? `Remove "${category.name}"? ${itemCount} menu item(s) will become uncategorized.`
+        : `Remove "${category.name}"?`
+    );
+    if (!confirmed) return;
+    const { error } = await supabase.from("menu_categories").delete().eq("id", category.id);
+    if (error) {
+      setError("Could not remove that category.");
+      return;
+    }
+    if (editingCategoryId === category.id) {
+      resetCategoryForm();
+    }
+    setMessage("Category removed.");
+    await loadAdminData();
+  }
+
   async function toggleLocation(location: DeliveryLocation) {
     if (!supabase) return;
     const { error } = await supabase
@@ -218,6 +291,22 @@ export default function AdminClient({ userEmail }: { userEmail: string }) {
       setError("Could not update delivery location.");
       return;
     }
+    await loadAdminData();
+  }
+
+  async function deleteLocation(location: DeliveryLocation) {
+    if (!supabase) return;
+    const confirmed = window.confirm(`Remove "${location.name}" from delivery locations?`);
+    if (!confirmed) return;
+    const { error } = await supabase.from("delivery_locations").delete().eq("id", location.id);
+    if (error) {
+      setError("Could not remove that delivery location.");
+      return;
+    }
+    if (editingLocationId === location.id) {
+      resetLocationForm();
+    }
+    setMessage("Delivery location removed.");
     await loadAdminData();
   }
 
@@ -271,25 +360,43 @@ export default function AdminClient({ userEmail }: { userEmail: string }) {
           </form>
 
           <form onSubmit={saveCategory} className="rounded-lg border border-[#ead7c2] bg-white p-4 shadow-sm">
-            <h2 className="font-semibold">Add category</h2>
-            <div className="mt-3 grid grid-cols-[1fr_90px] gap-2">
-              <input value={categoryName} onChange={(event) => setCategoryName(event.target.value)} placeholder="Category name" className="rounded-md border border-[#e3cdb6] px-3 py-2" />
-              <input value={categorySort} onChange={(event) => setCategorySort(event.target.value)} placeholder="Sort" inputMode="numeric" className="rounded-md border border-[#e3cdb6] px-3 py-2" />
+            <h2 className="font-semibold">{editingCategoryId ? "Edit category" : "Add category"}</h2>
+            <div className="mt-3">
+              <label className="block text-sm font-medium text-[#5f4a3a]">
+                Category name
+                <input value={categoryName} onChange={(event) => setCategoryName(event.target.value)} placeholder="Category name" className="mt-1 w-full rounded-md border border-[#e3cdb6] px-3 py-2" />
+              </label>
             </div>
-            <button className="mt-3 rounded-md border border-[#e3cdb6] px-4 py-2 font-semibold text-[#5f4a3a] hover:bg-[#fff1df]">
-              Add category
-            </button>
+            <div className="mt-3 flex gap-2">
+              <button className="rounded-md border border-[#e3cdb6] px-4 py-2 font-semibold text-[#5f4a3a] hover:bg-[#fff1df]">
+                {editingCategoryId ? "Save category" : "Add category"}
+              </button>
+              {editingCategoryId && (
+                <button type="button" onClick={resetCategoryForm} className="rounded-md border border-[#e3cdb6] px-4 py-2 font-semibold text-[#5f4a3a] hover:bg-[#fff1df]">
+                  Cancel
+                </button>
+              )}
+            </div>
           </form>
 
           <form onSubmit={saveLocation} className="rounded-lg border border-[#ead7c2] bg-white p-4 shadow-sm">
-            <h2 className="font-semibold">Add delivery location</h2>
-            <div className="mt-3 grid grid-cols-[1fr_90px] gap-2">
-              <input value={locationName} onChange={(event) => setLocationName(event.target.value)} placeholder="e.g. TimeTec HQ - Level 4" className="rounded-md border border-[#e3cdb6] px-3 py-2" />
-              <input value={locationSort} onChange={(event) => setLocationSort(event.target.value)} placeholder="Sort" inputMode="numeric" className="rounded-md border border-[#e3cdb6] px-3 py-2" />
+            <h2 className="font-semibold">{editingLocationId ? "Edit delivery location" : "Add delivery location"}</h2>
+            <div className="mt-3">
+              <label className="block text-sm font-medium text-[#5f4a3a]">
+                Delivery location
+                <input value={locationName} onChange={(event) => setLocationName(event.target.value)} placeholder="e.g. TimeTec HQ - Level 4" className="mt-1 w-full rounded-md border border-[#e3cdb6] px-3 py-2" />
+              </label>
             </div>
-            <button className="mt-3 rounded-md border border-[#e3cdb6] px-4 py-2 font-semibold text-[#5f4a3a] hover:bg-[#fff1df]">
-              Add location
-            </button>
+            <div className="mt-3 flex gap-2">
+              <button className="rounded-md border border-[#e3cdb6] px-4 py-2 font-semibold text-[#5f4a3a] hover:bg-[#fff1df]">
+                {editingLocationId ? "Save location" : "Add location"}
+              </button>
+              {editingLocationId && (
+                <button type="button" onClick={resetLocationForm} className="rounded-md border border-[#e3cdb6] px-4 py-2 font-semibold text-[#5f4a3a] hover:bg-[#fff1df]">
+                  Cancel
+                </button>
+              )}
+            </div>
           </form>
 
           {(message || error) && (
@@ -322,9 +429,53 @@ export default function AdminClient({ userEmail }: { userEmail: string }) {
                     <button type="button" onClick={() => toggleItem(item)} className="rounded-md border border-[#e3cdb6] px-3 py-1.5 text-sm font-semibold text-[#5f4a3a]">
                       {item.is_available ? "Disable" : "Enable"}
                     </button>
+                    <button type="button" onClick={() => deleteMenuItem(item)} className="rounded-md border border-red-200 px-3 py-1.5 text-sm font-semibold text-red-700 hover:bg-red-50">
+                      Remove
+                    </button>
                   </div>
                 </article>
               ))}
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-[#ead7c2] bg-white p-4 shadow-sm">
+            <h2 className="text-xl font-semibold">Categories</h2>
+            <div className="mt-4 grid gap-3 md:grid-cols-2">
+              {categories.length === 0 ? (
+                <p className="rounded-md border border-dashed border-[#e3cdb6] p-5 text-center text-[#7a6656] md:col-span-2">
+                  Categories will appear here after you add them.
+                </p>
+              ) : (
+                categories.map((category) => {
+                  const itemCount = items.filter((item) => item.category_id === category.id).length;
+                  return (
+                    <article key={category.id} className="rounded-md border border-[#ead7c2] p-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h3 className="font-semibold">{category.name}</h3>
+                          <p className="text-sm text-[#7a6656]">
+                            {itemCount} item{itemCount === 1 ? "" : "s"}
+                          </p>
+                        </div>
+                        <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${category.is_active ? "bg-emerald-50 text-emerald-700" : "bg-stone-100 text-stone-600"}`}>
+                          {category.is_active ? "Active" : "Hidden"}
+                        </span>
+                      </div>
+                      <div className="mt-3 flex gap-2">
+                        <button type="button" onClick={() => editCategory(category)} className="rounded-md border border-[#e3cdb6] px-3 py-1.5 text-sm font-semibold text-[#5f4a3a]">
+                          Edit
+                        </button>
+                        <button type="button" onClick={() => toggleCategory(category)} className="rounded-md border border-[#e3cdb6] px-3 py-1.5 text-sm font-semibold text-[#5f4a3a]">
+                          {category.is_active ? "Disable" : "Enable"}
+                        </button>
+                        <button type="button" onClick={() => deleteCategory(category)} className="rounded-md border border-red-200 px-3 py-1.5 text-sm font-semibold text-red-700 hover:bg-red-50">
+                          Remove
+                        </button>
+                      </div>
+                    </article>
+                  );
+                })
+              )}
             </div>
           </div>
 
@@ -336,15 +487,22 @@ export default function AdminClient({ userEmail }: { userEmail: string }) {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <h3 className="font-semibold">{location.name}</h3>
-                      <p className="text-sm text-[#7a6656]">Sort order {location.sort_order}</p>
                     </div>
                     <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${location.is_active ? "bg-emerald-50 text-emerald-700" : "bg-stone-100 text-stone-600"}`}>
                       {location.is_active ? "Active" : "Hidden"}
                     </span>
                   </div>
-                  <button type="button" onClick={() => toggleLocation(location)} className="mt-3 rounded-md border border-[#e3cdb6] px-3 py-1.5 text-sm font-semibold text-[#5f4a3a]">
-                    {location.is_active ? "Disable" : "Enable"}
-                  </button>
+                  <div className="mt-3 flex gap-2">
+                    <button type="button" onClick={() => editLocation(location)} className="rounded-md border border-[#e3cdb6] px-3 py-1.5 text-sm font-semibold text-[#5f4a3a]">
+                      Edit
+                    </button>
+                    <button type="button" onClick={() => toggleLocation(location)} className="rounded-md border border-[#e3cdb6] px-3 py-1.5 text-sm font-semibold text-[#5f4a3a]">
+                      {location.is_active ? "Disable" : "Enable"}
+                    </button>
+                    <button type="button" onClick={() => deleteLocation(location)} className="rounded-md border border-red-200 px-3 py-1.5 text-sm font-semibold text-red-700 hover:bg-red-50">
+                      Remove
+                    </button>
+                  </div>
                 </article>
               ))}
             </div>

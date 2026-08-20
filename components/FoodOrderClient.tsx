@@ -97,7 +97,7 @@ export default function FoodOrderClient({
           .from("menu_categories")
           .select("id, name, sort_order, is_active")
           .eq("is_active", true)
-          .order("sort_order", { ascending: true }),
+          .order("name", { ascending: true }),
         supabase
           .from("menu_items")
           .select("id, category_id, name, description, price_cents, image_url, is_available")
@@ -107,7 +107,7 @@ export default function FoodOrderClient({
           .from("delivery_locations")
           .select("id, name, sort_order, is_active")
           .eq("is_active", true)
-          .order("sort_order", { ascending: true }),
+          .order("name", { ascending: true }),
       ]);
 
     if (profileData) {
