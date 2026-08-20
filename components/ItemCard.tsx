@@ -131,7 +131,8 @@ export default function ItemCard({
               </button>
               <button
                 onClick={() => setConfirmingDelete(true)}
-                className="rounded-md border border-red-200 px-3 py-1.5 text-red-600 hover:bg-red-50"
+                className="rounded-md border border-gray-300 px-3 py-1.5 text-gray-700 hover:bg-gray-50"
+                title="Delete item"
               >
                 Delete
               </button>

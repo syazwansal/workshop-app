@@ -11,7 +11,7 @@ export const brand = {
   tagline: "Your private list of everything that matters.",
 
   /** Main accent color (any CSS color, e.g. "#4f46e5" or "rebeccapurple"). */
-  primaryColor: "#374151",
+  primaryColor: "#22c55e",
 
   /** Logo image in /public — swap the file or point to a new one. */
   logo: "/logo.svg",
