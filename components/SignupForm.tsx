@@ -50,7 +50,7 @@ export default function SignupForm() {
     return (
       <div className="mx-auto mt-12 w-full max-w-sm px-4">
         <h1 className="text-2xl font-bold">Check your email</h1>
-        <p className="mt-3 text-gray-600">
+        <p className="mt-3 text-[#6f5a48]">
           We sent a confirmation link to <strong>{email}</strong>. Click it to finish
           creating your account, then sign in.
         </p>
@@ -66,7 +66,7 @@ export default function SignupForm() {
           <BackendNotConnected />
         </div>
       )}
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4 rounded-lg border border-[#ead7c2] bg-white p-5 shadow-sm">
         <div>
           <label htmlFor="email" className="block text-sm font-medium">
             Email
@@ -78,12 +78,12 @@ export default function SignupForm() {
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-2 focus:outline-offset-1"
+            className="mt-1 w-full rounded-md border border-[#e3cdb6] px-3 py-2 focus:outline-2 focus:outline-offset-1"
           />
         </div>
         <div>
           <label htmlFor="password" className="block text-sm font-medium">
-            Password <span className="font-normal text-gray-500">(at least 8 characters)</span>
+            Password <span className="font-normal text-[#7a6656]">(at least 8 characters)</span>
           </label>
           <input
             id="password"
@@ -92,7 +92,7 @@ export default function SignupForm() {
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-2 focus:outline-offset-1"
+            className="mt-1 w-full rounded-md border border-[#e3cdb6] px-3 py-2 focus:outline-2 focus:outline-offset-1"
           />
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}
@@ -105,7 +105,7 @@ export default function SignupForm() {
           {busy ? "Creating account…" : "Sign up"}
         </button>
       </form>
-      <p className="mt-4 text-sm text-gray-600">
+      <p className="mt-4 text-sm text-[#6f5a48]">
         Already have an account?{" "}
         <Link href="/login" className="underline" style={{ color: brand.primaryColor }}>
           Sign in

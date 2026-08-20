@@ -2,90 +2,59 @@ import Link from "next/link";
 import BrandHeader from "@/components/BrandHeader";
 import { brand } from "@/lib/config/brand";
 
-// ─────────────────────────────────────────────────────────────
-// HOMEPAGE CONTENT — safe to customize in Module 4.
-// Edit the words below, or reorder the sections in SECTION_ORDER.
-// ─────────────────────────────────────────────────────────────
-
-const headline = "Keep track of the stuff that matters.";
-const subcopy =
-  "A private list that's yours alone. Add notes, ideas and reminders — they're saved securely and only you can see them.";
-
-const howItWorks = [
-  { title: "1. Create an account", text: "Sign up with just an email and a password." },
-  { title: "2. Add your items", text: "Notes, ideas, tasks — anything you want to keep." },
-  { title: "3. Come back anytime", text: "Your list is saved in the cloud, private to you." },
+const highlights = [
+  "Office delivery for busy TimeTec teams",
+  "Fresh menu items grouped by breakfast, meals, noodles, and drinks",
+  "Live order status from kitchen prep to delivery",
 ];
-
-// Reorder these to change the page layout (Module 4 layout edit).
-const SECTION_ORDER = ["hero", "how-it-works", "cta"] as const;
-
-// ─────────────────────────────────────────────────────────────
-
-type SectionId = (typeof SECTION_ORDER)[number];
-
-const sections: Record<SectionId, React.ReactNode> = {
-  hero: (
-    <section key="hero" className="px-4 py-16 text-center">
-      {brand.showWorkshopBadge && (
-        <span className="future-pulse mb-4 inline-block rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-600">
-          Built at the TimeTec AI Workshop
-        </span>
-      )}
-      <h1 className="mx-auto max-w-2xl text-4xl font-bold tracking-tight sm:text-5xl">
-        {headline}
-      </h1>
-      <p className="mx-auto mt-4 max-w-xl text-lg text-gray-600">{subcopy}</p>
-      <p
-        className="future-sheen mt-2 bg-clip-text text-sm font-medium text-transparent"
-      >
-        {brand.tagline}
-      </p>
-    </section>
-  ),
-  "how-it-works": (
-    <section key="how-it-works" className="px-4 py-12">
-      <h2 className="text-center text-2xl font-semibold">How it works</h2>
-      <div className="mx-auto mt-8 grid max-w-4xl gap-6 sm:grid-cols-3">
-        {howItWorks.map((step) => (
-          <div key={step.title} className="rounded-xl border border-gray-200 p-6">
-            <h3 className="font-semibold">{step.title}</h3>
-            <p className="mt-2 text-sm text-gray-600">{step.text}</p>
-          </div>
-        ))}
-      </div>
-    </section>
-  ),
-  cta: (
-    <section key="cta" className="px-4 py-16 text-center">
-      <h2 className="text-2xl font-semibold">Ready to start?</h2>
-      <div className="mt-6 flex justify-center gap-4">
-        <Link
-          href="/signup"
-          className="future-pulse rounded-md px-5 py-2.5 font-medium text-white"
-          style={{ backgroundColor: brand.primaryColor }}
-        >
-          Create your account
-        </Link>
-        <Link
-          href="/login"
-          className="rounded-md border border-gray-300 px-5 py-2.5 font-medium text-gray-700 hover:bg-gray-50"
-        >
-          Sign in
-        </Link>
-      </div>
-    </section>
-  ),
-};
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#fff8ef] text-[#2d2018]">
       <BrandHeader />
-      <main>{SECTION_ORDER.map((id) => sections[id])}</main>
-      <footer className="border-t border-gray-200 px-4 py-6 text-center text-sm text-gray-500">
-        {brand.name} — {brand.tagline}
-      </footer>
+      <main>
+        <section className="mx-auto grid min-h-[calc(100vh-76px)] max-w-6xl items-center gap-10 px-4 py-10 lg:grid-cols-[1fr_0.9fr]">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#11895b]">
+              TimeTec staff ordering
+            </p>
+            <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight sm:text-5xl">
+              Order warm meals to your office desk.
+            </h1>
+            <p className="mt-4 max-w-2xl text-lg leading-8 text-[#6f5a48]">
+              Browse the daily menu, send your delivery location, and track each order
+              from received to delivered without leaving the workday flow.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link
+                href="/signup"
+                className="rounded-md px-5 py-3 font-semibold text-white shadow-sm"
+                style={{ backgroundColor: brand.primaryColor }}
+              >
+                Start ordering
+              </Link>
+              <Link
+                href="/login"
+                className="rounded-md border border-[#e3cdb6] bg-white px-5 py-3 font-semibold text-[#3b2a20] hover:bg-[#fff1df]"
+              >
+                Sign in
+              </Link>
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-lg border border-[#e3cdb6] bg-white shadow-sm">
+            <div className="aspect-[4/3] bg-[url('https://images.unsplash.com/photo-1543353071-10c8ba85a904?auto=format&fit=crop&w=1200&q=80')] bg-cover bg-center" />
+            <div className="grid gap-3 p-5">
+              {highlights.map((item) => (
+                <div key={item} className="flex items-center gap-3 text-sm text-[#5f4a3a]">
+                  <span className="h-2.5 w-2.5 rounded-full bg-[#11895b]" />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </main>
     </div>
   );
 }

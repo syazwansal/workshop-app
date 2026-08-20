@@ -5,13 +5,13 @@
 // ─────────────────────────────────────────────────────────────
 export const brand = {
   /** The app's name — shown in the header, homepage and browser tab. */
-  name: "My Intro Apps",
+  name: "TimeTec Staff Meals",
 
   /** One-line tagline shown under the name on the homepage. */
-  tagline: "Your private list of everything that matters.",
+  tagline: "Warm meals delivered around the office.",
 
   /** Main accent color (any CSS color, e.g. "#4f46e5" or "rebeccapurple"). */
-  primaryColor: "#22c55e",
+  primaryColor: "#11895b",
 
   /** Logo image in /public — swap the file or point to a new one. */
   logo: "/logo.svg",

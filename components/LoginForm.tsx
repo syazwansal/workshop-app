@@ -40,7 +40,7 @@ export default function LoginForm({ confirmError = false }: { confirmError?: boo
           <BackendNotConnected />
         </div>
       )}
-      <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+      <form onSubmit={handleSubmit} className="mt-6 space-y-4 rounded-lg border border-[#ead7c2] bg-white p-5 shadow-sm">
         <div>
           <label htmlFor="email" className="block text-sm font-medium">
             Email
@@ -52,7 +52,7 @@ export default function LoginForm({ confirmError = false }: { confirmError?: boo
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-2 focus:outline-offset-1"
+            className="mt-1 w-full rounded-md border border-[#e3cdb6] px-3 py-2 focus:outline-2 focus:outline-offset-1"
           />
         </div>
         <div>
@@ -66,7 +66,7 @@ export default function LoginForm({ confirmError = false }: { confirmError?: boo
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="mt-1 w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-2 focus:outline-offset-1"
+            className="mt-1 w-full rounded-md border border-[#e3cdb6] px-3 py-2 focus:outline-2 focus:outline-offset-1"
           />
         </div>
         {error && <p className="text-sm text-red-600">{error}</p>}
@@ -79,7 +79,7 @@ export default function LoginForm({ confirmError = false }: { confirmError?: boo
           {busy ? "Signing in…" : "Sign in"}
         </button>
       </form>
-      <p className="mt-4 text-sm text-gray-600">
+      <p className="mt-4 text-sm text-[#6f5a48]">
         No account yet?{" "}
         <Link href="/signup" className="underline" style={{ color: brand.primaryColor }}>
           Sign up

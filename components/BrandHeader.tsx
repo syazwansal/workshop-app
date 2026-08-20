@@ -5,7 +5,7 @@ import { brand } from "@/lib/config/brand";
 /** Top navigation shown on the public pages (/, /login, /signup). */
 export default function BrandHeader() {
   return (
-    <header className="border-b border-gray-200 bg-white">
+    <header className="border-b border-[#ead7c2] bg-[#fffaf3]/95">
       <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
         <Link
           href="/"
@@ -16,7 +16,7 @@ export default function BrandHeader() {
           {brand.name}
         </Link>
         <nav className="flex items-center gap-3 text-sm">
-          <Link href="/login" className="rounded-md px-3 py-1.5 text-gray-600 hover:text-gray-900">
+          <Link href="/login" className="rounded-md px-3 py-1.5 text-[#6f5a48] hover:text-[#2d2018]">
             Sign in
           </Link>
           <Link

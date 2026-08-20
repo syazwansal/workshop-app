@@ -8,7 +8,7 @@ export default async function LoginPage({
 }) {
   const { error } = await searchParams;
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-[#fff8ef] text-[#2d2018]">
       <BrandHeader />
       <LoginForm confirmError={error === "confirm"} />
     </div>
