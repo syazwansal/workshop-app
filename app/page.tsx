@@ -3,7 +3,7 @@ import BrandHeader from "@/components/BrandHeader";
 import { brand } from "@/lib/config/brand";
 
 const highlights = [
-  "Office delivery for busy TimeTec teams",
+  "Office delivery for busy teams",
   "Fresh menu items grouped by breakfast, meals, noodles, and drinks",
   "Live order status from kitchen prep to delivery",
 ];
@@ -16,7 +16,7 @@ export default function HomePage() {
         <section className="mx-auto grid min-h-[calc(100vh-76px)] max-w-6xl items-center gap-10 px-4 py-10 lg:grid-cols-[1fr_0.9fr]">
           <div>
             <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#11895b]">
-              TimeTec staff ordering
+              Lunch Noi? staff ordering
             </p>
             <h1 className="mt-4 max-w-3xl text-4xl font-bold leading-tight sm:text-5xl">
               Order warm meals to your office desk.

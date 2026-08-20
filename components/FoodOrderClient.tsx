@@ -37,7 +37,7 @@ function FoodImage({ item }: { item: MenuItem }) {
       <div className="flex aspect-[16/9] items-center justify-center bg-[linear-gradient(135deg,#f6e2c8,#fff8ef_48%,#dff3e8)] px-6 text-center">
         <div>
           <p className="text-sm font-semibold uppercase tracking-[0.16em] text-[#11895b]">
-            TimeTec meals
+            Lunch Noi?
           </p>
           <p className="mt-2 text-lg font-bold text-[#4a3528]">{item.name}</p>
         </div>

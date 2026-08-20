@@ -1,4 +1,4 @@
--- TimeTec Staff Meals schema
+-- Lunch Noi? schema
 -- Run this once in your Supabase project's SQL editor.
 -- Statements are guarded so the file can be re-run safely.
 

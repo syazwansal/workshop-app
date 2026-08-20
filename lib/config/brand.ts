@@ -5,7 +5,7 @@
 // ─────────────────────────────────────────────────────────────
 export const brand = {
   /** The app's name — shown in the header, homepage and browser tab. */
-  name: "TimeTec Staff Meals",
+  name: "Lunch Noi?",
 
   /** One-line tagline shown under the name on the homepage. */
   tagline: "Warm meals delivered around the office.",
