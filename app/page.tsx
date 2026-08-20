@@ -28,7 +28,7 @@ const sections: Record<SectionId, React.ReactNode> = {
   hero: (
     <section key="hero" className="px-4 py-16 text-center">
       {brand.showWorkshopBadge && (
-        <span className="mb-4 inline-block rounded-full border border-gray-300 px-3 py-1 text-xs text-gray-600">
+        <span className="future-pulse mb-4 inline-block rounded-full border border-gray-300 bg-white px-3 py-1 text-xs text-gray-600">
           Built at the TimeTec AI Workshop
         </span>
       )}
@@ -36,7 +36,9 @@ const sections: Record<SectionId, React.ReactNode> = {
         {headline}
       </h1>
       <p className="mx-auto mt-4 max-w-xl text-lg text-gray-600">{subcopy}</p>
-      <p className="mt-2 text-sm font-medium" style={{ color: brand.primaryColor }}>
+      <p
+        className="future-sheen mt-2 bg-clip-text text-sm font-medium text-transparent"
+      >
         {brand.tagline}
       </p>
     </section>
@@ -60,7 +62,7 @@ const sections: Record<SectionId, React.ReactNode> = {
       <div className="mt-6 flex justify-center gap-4">
         <Link
           href="/signup"
-          className="rounded-md px-5 py-2.5 font-medium text-white"
+          className="future-pulse rounded-md px-5 py-2.5 font-medium text-white"
           style={{ backgroundColor: brand.primaryColor }}
         >
           Create your account
